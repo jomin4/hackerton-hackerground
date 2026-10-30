@@ -16,7 +16,9 @@
     "test:coverage": "npm --workspaces --if-present run test:coverage",
     "lint": "npm --workspaces --if-present run lint",
     "typecheck": "npm --workspaces --if-present run typecheck",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "docker:up": "docker compose -f infra/compose.local.yml up --build",
+    "docker:down": "docker compose -f infra/compose.local.yml down"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

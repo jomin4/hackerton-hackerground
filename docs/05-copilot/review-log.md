@@ -14,7 +14,7 @@
 | 06 | web-course-result | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#6](https://github.com/jomin4/hackerton-hackerground/pull/6) |
 | 07 | web-spot-detail | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#7](https://github.com/jomin4/hackerton-hackerground/pull/7) |
 | 08 | web-states | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#8](https://github.com/jomin4/hackerton-hackerground/pull/8) |
-| 09 | dockerize | | | | ☐ | |
+| 09 | dockerize | 2026-10-30 | 2026-10-30 | 1 | ☑ | |
 
 ## 기록 양식
 
@@ -139,3 +139,15 @@
   - API가 내려가 프록시 · nginx가 502 HTML을 주면 `statusText`("Bad Gateway") 영어가 화면에 노출 → 공통 오류 JSON이 아니면 한국어 고정 문구, 네트워크 오류도 한국어
 - 리뷰 운영 메모: 사용자가 같은 미리보기 탭을 보고 있어 리뷰어 조작과 섞임 → 리뷰는 별도 탭에서
 - Copilot이 잘한 점: 상태별 컴포넌트 테스트로 고정, 404 공통 컴포넌트(NotFoundState) 분리
+
+### 09 — dockerize (2026-10-30)
+
+- 소요: Copilot CLI 1차 6분 53초 → 리뷰 → 수정 1회 1분 26초, 재시도 1회
+- 결과: 완료 기준 통과 — 전체 테스트 79개, typecheck · lint · prettier. 리뷰어가 `docker compose up --build -d`로 직접 리허설 후 `down`
+- 사전 보완: `docker:up`은 끝나지 않는 명령 → `-d`로 띄우고 확인 후 down, compose api에 `PORT=3000` 명시(05 리뷰에서 본 PORT 주입 문제 방지), `.dockerignore`에 `.claude`
+- 리뷰에서 확인: api · web healthy, 호스트에는 8080만 공개(api 3000은 내부), SPA 새로고침 200 · `index.html` no-cache, `/assets/*` 1년 immutable + gzip, 모든 응답 보안 헤더 3개, nginx 경유 `/api/*`(health · 215분 · 404 · 400), api 컨테이너 `node` 사용자 · TS 소스/devDependencies 없음 · shared 소스 없이 실행(번들 포함), 브라우저로 8080 결과 · 상세 화면
+- 리뷰 지적 사항:
+  - `/assets/`에 `expires 1y` + `add_header Cache-Control`로 Cache-Control 헤더가 두 줄 → `expires` 제거
+- 이미지 크기: Copilot 보고 api 267MB · web 94.2MB는 Docker Desktop containerd 저장소가 압축 레이어까지 더한 값. 실제 파일시스템(`du -sxh /`)은 **api 187.5MB · web 64.1MB**(우리 파일 424KB, 나머지 nginx:alpine 기본). web 60MB 목표는 기본 이미지보다 작아 비현실적 → 프롬프트 기준을 70MB · du 측정으로 정정
+- Copilot이 범위 밖에서 한 것: web healthcheck 추가, 빌드에 `tsconfig.base.json` 복사 — 둘 다 필요해서 수용
+- 해커톤용으로 저장할 표현: "끝나지 않는 명령은 -d로 띄우고 확인 후 반드시 down", "호스트 환경 변수가 바뀌어도 컨테이너 포트가 고정되게 compose에 명시"
