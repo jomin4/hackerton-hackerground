@@ -6,7 +6,7 @@
 
 | # | 프롬프트 | 시작 | 완료 | 재시도 | 결과 | PR |
 |---|---|---|---|---|---|---|
-| 01 | scaffold-monorepo | 2026-10-30 | 2026-10-30 | 1 | ☑ | |
+| 01 | scaffold-monorepo | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#1](https://github.com/jomin4/hackerton-hackerground/pull/1) |
 | 02 | api-spots | | | | ☐ | |
 | 03 | recommend-course | | | | ☐ | |
 | 04 | api-course | | | | ☐ | |
