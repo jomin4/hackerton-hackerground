@@ -5,6 +5,7 @@ import { SiteHeader } from './components/layout/SiteHeader.js';
 import { Container } from './components/ui/Container.js';
 import { CoursePage } from './pages/CoursePage.js';
 import { HomePage } from './pages/HomePage.js';
+import { SpotPage } from './pages/SpotPage.js';
 
 function ComingSoonPage() {
   return (
@@ -29,7 +30,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/course" element={<CoursePage />} />
-          <Route path="/spots/:id" element={<ComingSoonPage />} />
+          <Route path="/spots/:id" element={<SpotPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Routes>
       </main>

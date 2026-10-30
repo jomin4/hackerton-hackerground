@@ -130,7 +130,7 @@ export function CoursePage() {
         ) : (
           <>
             <div className="order-2 w-full min-w-0 flex-[999_1_560px] md:order-1">
-              <CourseTimeline course={state.data} fromQuery={location.search.replace(/^\?/, '')} />
+              <CourseTimeline course={state.data} />
             </div>
             <aside className="order-1 w-full min-w-0 flex-[1_1_320px] md:order-2">
               <div className="space-y-4">

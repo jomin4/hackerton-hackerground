@@ -37,6 +37,8 @@ apps/web 에 관광지 상세 페이지(/spots/:id)를 구현해줘.
 - /spots/wine-tunnel 에서 운영시간·문의·출처가 데이터대로 보임
 - /spots/rail-bike 에서 운영시간이 "방문 전 확인"으로 보임
 - 코스 결과 → 상세 → "코스로 돌아가기" 시 같은 코스로 복귀
+- 접근성: 버튼 · 링크 터치 영역 44px 이상, 글자 12px 이상, :focus-visible 을 덮어쓰지 않음(outline-none 금지), 새 탭 링크는 target=_blank rel="noopener noreferrer"
+- 이동 문구 · URL 형식은 06과 같게 (같은 권역 "차로 약 10분", 코스 URL 은 src/lib/query.ts 의 toCourseUrl 사용)
 
 끝나면 보고: 변경 파일 목록, 실행한 명령과 결과, 문서와 다르게 한 부분과 이유.
 ```

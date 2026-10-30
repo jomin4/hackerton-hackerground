@@ -12,7 +12,7 @@
 | 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#4](https://github.com/jomin4/hackerton-hackerground/pull/4) |
 | 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#5](https://github.com/jomin4/hackerton-hackerground/pull/5) |
 | 06 | web-course-result | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#6](https://github.com/jomin4/hackerton-hackerground/pull/6) |
-| 07 | web-spot-detail | | | | ☐ | |
+| 07 | web-spot-detail | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#7](https://github.com/jomin4/hackerton-hackerground/pull/7) |
 | 08 | web-states | | | | ☐ | |
 | 09 | dockerize | | | | ☐ | |
 
@@ -119,3 +119,12 @@
   - "다시 만들기" 링크가 `URLSearchParams`라 tags 쉼표가 `%2C` → 홈 · 공유 링크와 같은 `toCourseUrl` 사용
 - 리뷰 중 발견 (앱 문제 아님): 머지 · 브랜치 전환으로 `vite.config.ts`가 다시 쓰이자 Vite가 자동 재시작되면서 `/api` 프록시가 빠짐 (API 직접 호출은 정상) → 개발 서버 재시작으로 해결. 브랜치 전환 후에는 dev 서버를 다시 띄울 것
 - Copilot이 잘한 점: 서버 응답 값만으로 렌더(화면 재계산 없음), 모바일 순서를 CSS order로 처리
+
+### 07 — web-spot-detail (2026-10-30)
+
+- 소요: Copilot CLI 5분 46초, 재시도 0회
+- 결과: 완료 기준 통과 — 전체 테스트 68개(web 19), typecheck · lint · prettier. 내장 브라우저로 확인
+- 리뷰에서 확인: 와인터널 운영 정보 · 출처 "한국관광공사 · 2026-08-18 기준"이 데이터와 일치 / 임시 정보 장소는 "방문 전 확인" + 기준일 없는 출처 문구, `undefined` 노출 없음 / from 있을 때 브레드크럼 · 코스로 돌아가기 · "이 코스에서"(3/4, 이전 · 다음) / 코스에 없는 장소(프로방스)는 "이 코스에서" 숨김 / from 없으면 홈으로 / 지도 링크 `noopener noreferrer` / 문서 제목 변경 / 44px · 12px 기준 충족
+- Copilot이 범위 밖에서 바꾼 것: 06의 상세 링크 `from`을 현재 URL 문자열 대신 `toCourseUrl(course.conditions)`로 정규화 — 개선이라 수용
+- 남긴 것: 같은 권역 카드의 체류가 "100분"(결과 화면은 "1시간 40분") → 08 프롬프트에 함께 반영
+- Copilot이 잘한 점: 프롬프트에 추가한 접근성 · 06과 같은 문구/URL 조건을 그대로 지킴
