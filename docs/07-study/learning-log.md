@@ -47,7 +47,7 @@ https://learn.microsoft.com/ko-kr/training/paths/copilot/
 | 여러 환경에서의 Copilot (IDE · Chat · GitHub.com · CLI) | ☐ | |
 | 관리 및 사용자 지정 | ☐ | 커스텀 지침 파일 |
 | AI 개발자 사용 사례 | ☐ | |
-| Copilot으로 단위 테스트 개발 | ☐ | 프롬프트 03 — 알고리즘 테스트 T1~T8 |
+| Copilot으로 단위 테스트 개발 | ☐ | 프롬프트 03 — 알고리즘 테스트 T1~T9 |
 
 ## 이해 점검 답변
 
