@@ -13,7 +13,7 @@
 | 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#5](https://github.com/jomin4/hackerton-hackerground/pull/5) |
 | 06 | web-course-result | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#6](https://github.com/jomin4/hackerton-hackerground/pull/6) |
 | 07 | web-spot-detail | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#7](https://github.com/jomin4/hackerton-hackerground/pull/7) |
-| 08 | web-states | 2026-10-30 | 2026-10-30 | 1 | ☑ | |
+| 08 | web-states | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#8](https://github.com/jomin4/hackerton-hackerground/pull/8) |
 | 09 | dockerize | | | | ☐ | |
 
 ## 기록 양식
