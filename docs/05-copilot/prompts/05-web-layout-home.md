@@ -25,7 +25,10 @@ apps/web 에 React 앱 기반과 공통 레이아웃, 홈 화면을 구현해줘
    - index.html: lang="ko", Google Fonts(Geist, Geist Mono, Noto Sans KR) link, 메타 description, theme-color #FFFFFF
    - src/index.css: design-tokens.md 의 @theme 블록 그대로 + body 기본(배경 surface, 글자 ink, font-sans, antialiased)
    - src/main.tsx, src/App.tsx: React Router 라우트 / , /course , /spots/:id , * (페이지는 05에서는 Home만 구현, 나머지는 "준비 중" 자리표시)
-   - package.json 스크립트: dev, build(tsc --noEmit && vite build), preview, test, typecheck
+   - package.json: "type": "module", 스크립트 dev, build(tsc --noEmit && vite build), preview, test(vitest run), typecheck(tsc --noEmit), lint(eslint src)
+     (루트 npm run lint · typecheck · test 가 web 도 검사하도록. vitest · typescript · eslint 는 루트에 이미 있으니 web 에 다시 설치하지 마)
+   - vitest 설정: environment jsdom, include src/**/*.test.{ts,tsx}
+   - tsconfig.json: include src (+ vite.config.ts), jsx react-jsx, types 에 vite/client
 2. 공통 컴포넌트 (src/components/layout, src/components/ui)
    - SiteHeader: 로고(감색 원 + 검정 꼭지 SVG, aria-hidden) + "청도 코스", 메뉴 "이용 방법"(/#how) "관광지"(/#spots), 검정 버튼 "코스 만들기". 모바일(<768px)은 햄버거 버튼(aria-label="메뉴 열기", aria-expanded)으로 메뉴 토글
    - SiteFooter: 안내 문구 + © 2026 청도 코스 (font-mono)
