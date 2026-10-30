@@ -39,18 +39,19 @@ apps/api 에 Express 앱 골격과 관광지 조회 API를 구현해줘. /api/co
 - src/index.ts: config 읽기 → loadSpotsFromFile → createApp → listen. 데이터 검증 실패 시 에러 로그 후 process.exit(1). SIGTERM 받으면 server.close 후 종료
 - data/spots.json: data-model.md "초기 6곳 계산용 값" 표의 6곳. 와인터널은 data-model.md 예시 전체를 그대로 사용.
   나머지 5곳은 표의 zone/routeOrder/tags/goodFor/stayMinutes를 쓰고, name/summary/description/tips/address는 docs/01-product/spots-data.md 와 ui-screens 디자인 문구를 참고해 작성.
+  description · tips 에는 연도 · 거리 · 요금 · 운영시간 · 전화번호 같은 구체적 사실을 넣지 말고, 장소 성격을 설명하는 일반적인 문장만 써 (사실 확인 전 데이터라서). summary 는 80자 이하
   운영시간·휴무·요금·전화번호와 checkedAt은 확인되지 않았으므로 생략(필드 자체를 넣지 마). source는 @cheongdo/shared 의 UNVERIFIED_SOURCE 값("확인 전 임시 정보"),
   address는 권역 단위까지만("경상북도 청도군 화양읍" 등, 번지 지어내지 마). 규칙은 docs/01-product/spots-data.md 원칙 3
 - package.json 스크립트: dev(tsx watch src/index.ts), build(tsup), start(node --enable-source-maps dist/index.js), test(vitest run), test:coverage(vitest run --coverage), typecheck(tsc --noEmit)
 - tsup.config.ts: docs/00-overview/decisions/0004-api-build-tsup.md 의 설정 그대로. @cheongdo/shared 는 noExternal 로 번들에 포함, 나머지 dependencies 는 외부로 둠
   결과물은 dist/index.js 한 파일 (tsc 로 빌드하지 마. tsc 는 타입 검사 전용)
-- test/fixtures/spots.ts: data-model.md 초기 6곳 표 기반 테스트용 Spot 배열
+- test/fixtures/spots.ts: 03에서 이미 만들었으니 그대로 재사용 (값 수정 금지, 라우트 테스트에 필요한 필드만 추가 가능)
 - test/routes/health.test.ts, test/routes/spots.test.ts: testing.md의 API 표 중 health/spots 항목 전부
 - test/data/spots-file.test.ts: 실제 data/spots.json이 스키마를 통과하는지
 
 제약:
 - 라우트 핸들러 안에서 try/catch 반복 금지 (Express 5 async 에러 전달 사용)
-- domain/ 폴더는 아직 만들지 마 (03에서 만듦)
+- src/domain/ 은 03에서 만든 recommend-course.ts 가 있으니 수정하지 마
 - 확인되지 않은 운영 정보 지어내지 마
 
 완료 기준:
