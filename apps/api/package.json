@@ -1,0 +1,7 @@
+{
+  "name": "@cheongdo/api",
+  "private": true,
+  "dependencies": {
+    "@cheongdo/shared": "*"
+  }
+}

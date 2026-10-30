@@ -1,0 +1,7 @@
+{
+  "name": "@cheongdo/web",
+  "private": true,
+  "dependencies": {
+    "@cheongdo/shared": "*"
+  }
+}
