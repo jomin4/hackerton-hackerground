@@ -5,6 +5,7 @@ import type { Logger } from 'pino';
 import type { SpotRepository } from './data/spot-repository.js';
 import { createErrorHandler } from './middleware/error-handler.js';
 import { notFound } from './middleware/not-found.js';
+import { createCourseRouter } from './routes/course.js';
 import { createHealthRouter } from './routes/health.js';
 import { createSpotsRouter } from './routes/spots.js';
 
@@ -30,6 +31,7 @@ export function createApp({ spots, version, logger }: AppDependencies): express.
   );
   app.use('/api/health', createHealthRouter(spots, version));
   app.use('/api/spots', createSpotsRouter(spots));
+  app.use('/api/course', createCourseRouter(spots));
   app.use(notFound);
   app.use(createErrorHandler(logger));
 

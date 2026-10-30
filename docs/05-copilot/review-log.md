@@ -9,7 +9,7 @@
 | 01 | scaffold-monorepo | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#1](https://github.com/jomin4/hackerton-hackerground/pull/1) |
 | 02 | api-spots | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#3](https://github.com/jomin4/hackerton-hackerground/pull/3) |
 | 03 | recommend-course | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#2](https://github.com/jomin4/hackerton-hackerground/pull/2) |
-| 04 | api-course | | | | ☐ | |
+| 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#4](https://github.com/jomin4/hackerton-hackerground/pull/4) |
 | 05 | web-layout-home | | | | ☐ | |
 | 06 | web-course-result | | | | ☐ | |
 | 07 | web-spot-detail | | | | ☐ | |
@@ -82,3 +82,13 @@
 - Copilot이 틀린 점 / 반복된 실수: 규칙이 둘 이상 겹치면 나중에 나온 일반 규칙이 앞의 구체적 예외를 덮음 → **예외는 규칙 바로 옆에, "이 규칙은 X에는 적용하지 마" 형태로 쓸 것**
 - 다음 프롬프트에 반영할 것: 완료 기준의 `npx prettier --check .`를 1차부터 명시(이미 04~ 프롬프트에 없으면 러너 전문에 추가)
 - 해커톤용으로 저장할 표현: "X는 확인된 데이터라 이 규칙의 예외야. 문서 예시와 글자 하나까지 똑같이", "서버를 띄워야 하면 백그라운드로 띄우고 확인 후 반드시 종료해"
+
+### 04 — api-course (2026-10-30)
+
+- 소요: Copilot CLI 3분 4초, 재시도 0회
+- 모델 / 모드: Copilot CLI 비대화형, 자동 선택 모델
+- 결과: 완료 기준 통과 — api 테스트 32개(전체 49개), typecheck · lint · prettier. 리뷰에서 실제 `spots.json`으로 번들 서버를 띄워 T1 · tags 정규화 · 없는 exclude id · 다중 필드 400 · 캐시 헤더 확인
+- 리뷰 지적 사항: 없음 (라우트가 검증 → 호출 → 응답 3줄)
+- 알려진 한계 (수정 안 함): `?tags=a&tags=b`처럼 같은 파라미터를 반복하면 배열이 들어와 "관심사를 하나 이상 골라주세요."로 400 — 화면은 항상 쉼표 한 개 파라미터로 보내므로 수용
+- Copilot이 잘한 점: 02에서 만든 에러 미들웨어를 재사용하고 새로 만들지 않음. 리뷰어 추가 지시(가짜 저장소로 빈 결과, 리터럴 기대값)를 그대로 반영
+- 다음 프롬프트에 반영할 것: 05부터 화면 작업 — 리뷰에서 내장 브라우저로 데스크톱 · 390px 확인
