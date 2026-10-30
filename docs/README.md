@@ -9,7 +9,7 @@
 | [`02-design/`](02-design/ui-screens.md) | 화면 구성, 디자인 토큰 | Claude | 확정 |
 | [`03-architecture/`](03-architecture/system-overview.md) | 시스템 구조, API, 데이터 모델, 추천 알고리즘 | Claude | 확정 |
 | [`04-dev/`](04-dev/local-setup.md) | 로컬 환경, 코드 규칙, 테스트 | Claude | 확정 |
-| [`05-copilot/`](05-copilot/README.md) | Copilot 프롬프트 01~09, 리뷰 기록 | Claude → Copilot | 진행 전 |
+| [`05-copilot/`](05-copilot/README.md) | Copilot 프롬프트 01~09, 리뷰 기록 | Claude → Copilot | 완료 (2026-10-30) |
 | [`06-deploy/`](06-deploy/README.md) | Azure 배포 런북 01~07, 체크리스트, 트러블슈팅 | 본인 직접 | 진행 전 |
 | [`07-study/`](07-study/learning-log.md) | MS Learn 학습 기록, 해커톤 치트시트 | 본인 | 진행 중 |
 
