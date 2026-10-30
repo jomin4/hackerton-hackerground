@@ -54,7 +54,7 @@ web 과 api 의 Docker 이미지와 로컬 리허설용 compose 를 만들어줘
 - http://localhost:8080/api/health 200
 - http://localhost:3000 은 접속 안 됨 (api 비공개)
 - curl -I http://localhost:8080/assets/<파일명>.js 에 immutable 캐시 헤더, gzip 응답
-- docker images 로 이미지 크기 보고 (api 200MB 이하, web 60MB 이하 목표)
+- 이미지 크기 보고 (api 200MB 이하, web 70MB 이하 목표). Docker Desktop(containerd 저장소)의 docker images 값은 압축 레이어가 더해져 커 보이므로 docker run --rm --entrypoint sh <이미지> -c "du -sxh /" 의 실제 파일시스템 크기로 판단 (web 은 nginx:alpine 기본만 약 64MB)
 
 끝나면 보고: 변경 파일 목록, 실행한 명령과 결과(이미지 크기 포함), 문서와 다르게 한 부분과 이유.
 ```
