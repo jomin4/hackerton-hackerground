@@ -48,6 +48,6 @@ npm run dev          # http://localhost:5173
 ## 진행 상황
 
 - [x] 기획 · 설계 · UI 디자인
-- [ ] Copilot 구현 (프롬프트 01~09)
+- [x] Copilot 구현 (프롬프트 01~09) — [review-log](docs/05-copilot/review-log.md)
 - [ ] Azure 배포 (런북 01~07)
 - [ ] 모의 해커톤
