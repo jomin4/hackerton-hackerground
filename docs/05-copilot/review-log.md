@@ -11,7 +11,7 @@
 | 03 | recommend-course | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#2](https://github.com/jomin4/hackerton-hackerground/pull/2) |
 | 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#4](https://github.com/jomin4/hackerton-hackerground/pull/4) |
 | 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#5](https://github.com/jomin4/hackerton-hackerground/pull/5) |
-| 06 | web-course-result | | | | ☐ | |
+| 06 | web-course-result | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#6](https://github.com/jomin4/hackerton-hackerground/pull/6) |
 | 07 | web-spot-detail | | | | ☐ | |
 | 08 | web-states | | | | ☐ | |
 | 09 | dockerize | | | | ☐ | |
@@ -107,3 +107,15 @@
 - 리뷰어 착오 정정: 디자인 문서의 "감색"은 청도 반시의 **감 색(주황 #E8590C)**. 리뷰어가 남색으로 읽어 발표 다이어그램을 남색으로 그렸음 → 다시 그림
 - Copilot이 잘한 점: 토큰 · 레이아웃이 문서와 정확히 일치, 지시대로 dev 서버를 띄우지 않고 브라우저 미확인 항목을 정직하게 보고
 - 다음 프롬프트에 반영할 것: 화면 프롬프트 완료 기준에 "포커스 표시 · 44px 터치 영역 · 12px 이상"을 명시
+
+### 06 — web-course-result (2026-10-30)
+
+- 소요: Copilot CLI 1차 5분 55초 → 리뷰 → 수정 1회 3분 18초, 재시도 1회
+- 결과: 완료 기준 통과 — 전체 테스트 64개(web 15), typecheck · lint · prettier. 내장 브라우저로 T1(4곳 · 0:00/1:25/2:05/2:55 · 3시간 35분 · 운문사 · 프로방스 제외), 2시간 · 혼자 조건, 390px(요약이 타임라인 위, 가로 스크롤 없음) 확인
+- 사전 보완: "6시간 코스로 다시 만들기" 고정 문구 → "{다음 시간}시간 코스로" (2→4, 4→6), 접근성 완료 기준 추가
+- 리뷰에서 확인: 제목 조사(가족과 / 혼자 떠나는), 상세 링크 `from` 쿼리, 비율 막대 aria-label, 44px 미만 · 12px 미만 없음, AbortController로 이전 요청 취소
+- 리뷰 지적 사항:
+  - 같은 권역 이동 행이 "같은 권역"만 표시되어 10분 이동이 안 보임 → "차로 약 10분 · 같은 권역"
+  - "다시 만들기" 링크가 `URLSearchParams`라 tags 쉼표가 `%2C` → 홈 · 공유 링크와 같은 `toCourseUrl` 사용
+- 리뷰 중 발견 (앱 문제 아님): 머지 · 브랜치 전환으로 `vite.config.ts`가 다시 쓰이자 Vite가 자동 재시작되면서 `/api` 프록시가 빠짐 (API 직접 호출은 정상) → 개발 서버 재시작으로 해결. 브랜치 전환 후에는 dev 서버를 다시 띄울 것
+- Copilot이 잘한 점: 서버 응답 값만으로 렌더(화면 재계산 없음), 모바일 순서를 CSS order로 처리

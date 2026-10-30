@@ -24,7 +24,7 @@ apps/web 에 코스 결과 페이지(/course)를 구현해줘.
   - CourseTimeline: ol, 각 stop = 번호 원(검정, 모노) + 세로선(line-strong, 마지막 제외) + StopCard + 다음 장소까지 이동 행("차로 약 25분 · 청도읍 → 화양읍" / 같은 권역이면 "같은 권역")
   - StopCard: 이름, 권역 칩(MapPin), 시각 범위 formatClock("0:00 – 1:00", font-mono), 요약, 일치 태그(bg-accent-soft text-accent-text + 체크), 추천 이유("관심사 2개 일치 · 가족 추천" 형식), 체류, "상세 보기" 링크(/spots/:id?from=<현재 쿼리 인코딩>)
   - CourseSummary: 총 소요(큰 숫자 formatDuration) / 예산, 체류·이동·여유 비율 막대(div 3개, role="img" + aria-label 에 세 값 문장), 범례(색 사각형 + 텍스트), 장소 수 · 권역 목록
-  - ExcludedSpots: excluded 가 있을 때만. 이름 + 체류, 하단 링크 "6시간 코스로 다시 만들기"(hours가 6 미만일 때만, 다음 단계 시간으로)
+  - ExcludedSpots: excluded 가 있을 때만. 이름 + 체류, 하단 링크 "{다음 시간}시간 코스로 다시 만들기"(hours가 6 미만일 때만. 2→4, 4→6. 나머지 조건은 그대로)
   - 계산 가정 안내 박스 (이동 시간 가정 문구)
 - 로딩/빈 결과/오류는 08에서 다듬을 예정이니 지금은 간단한 텍스트 자리표시로 두고 컴포넌트 이름만 정해둬: CourseSkeleton, EmptyCourse, ErrorState
 - CoursePage.test.tsx: fetch 를 mock 해서 T1 응답을 주면 장소 4개가 순서대로 렌더되고 "3시간 35분"이 보이는지
@@ -38,6 +38,7 @@ apps/web 에 코스 결과 페이지(/course)를 구현해줘.
 - npm run dev 후 홈에서 "코스 만들기" → 결과 화면에 레일바이크 → 유등연지 → 와인터널 → 청도읍성, 총 3시간 35분
 - "링크 복사" 후 새 탭에 붙여 넣으면 같은 결과
 - 390px 폭에서 요약이 타임라인 위, 가로 스크롤 없음
+- 접근성: 버튼 · 링크 터치 영역 44px 이상, 글자 12px 이상, 05의 :focus-visible 을 덮어쓰지 않음(outline-none 금지)
 
 끝나면 보고: 변경 파일 목록, 실행한 명령과 결과, 문서와 다르게 한 부분과 이유.
 ```

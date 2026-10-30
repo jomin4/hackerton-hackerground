@@ -16,12 +16,15 @@ type ErrorPayload = {
   };
 };
 
-export async function fetchJson<T>(path: string): Promise<T> {
+export async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   let response: Response;
 
   try {
-    response = await fetch(path);
+    response = await fetch(path, { signal });
   } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw error;
+    }
     const message = error instanceof Error ? error.message : '서버에 연결할 수 없어요.';
     throw new ApiError(0, 'NETWORK_ERROR', message);
   }

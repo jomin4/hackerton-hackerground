@@ -3,6 +3,7 @@ import { Link, Route, Routes } from 'react-router';
 import { SiteFooter } from './components/layout/SiteFooter.js';
 import { SiteHeader } from './components/layout/SiteHeader.js';
 import { Container } from './components/ui/Container.js';
+import { CoursePage } from './pages/CoursePage.js';
 import { HomePage } from './pages/HomePage.js';
 
 function ComingSoonPage() {
@@ -27,7 +28,7 @@ export function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/course" element={<ComingSoonPage />} />
+          <Route path="/course" element={<CoursePage />} />
           <Route path="/spots/:id" element={<ComingSoonPage />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Routes>
