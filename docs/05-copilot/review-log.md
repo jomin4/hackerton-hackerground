@@ -9,7 +9,7 @@
 | 01 | scaffold-monorepo | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#1](https://github.com/jomin4/hackerton-hackerground/pull/1) |
 | 02 | api-spots | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#3](https://github.com/jomin4/hackerton-hackerground/pull/3) |
 | 03 | recommend-course | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#2](https://github.com/jomin4/hackerton-hackerground/pull/2) |
-| 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | |
+| 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#4](https://github.com/jomin4/hackerton-hackerground/pull/4) |
 | 05 | web-layout-home | | | | ☐ | |
 | 06 | web-course-result | | | | ☐ | |
 | 07 | web-spot-detail | | | | ☐ | |
