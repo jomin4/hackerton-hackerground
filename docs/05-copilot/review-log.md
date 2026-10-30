@@ -10,7 +10,7 @@
 | 02 | api-spots | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#3](https://github.com/jomin4/hackerton-hackerground/pull/3) |
 | 03 | recommend-course | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#2](https://github.com/jomin4/hackerton-hackerground/pull/2) |
 | 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#4](https://github.com/jomin4/hackerton-hackerground/pull/4) |
-| 05 | web-layout-home | | | | ☐ | |
+| 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | |
 | 06 | web-course-result | | | | ☐ | |
 | 07 | web-spot-detail | | | | ☐ | |
 | 08 | web-states | | | | ☐ | |
@@ -92,3 +92,18 @@
 - 알려진 한계 (수정 안 함): `?tags=a&tags=b`처럼 같은 파라미터를 반복하면 배열이 들어와 "관심사를 하나 이상 골라주세요."로 400 — 화면은 항상 쉼표 한 개 파라미터로 보내므로 수용
 - Copilot이 잘한 점: 02에서 만든 에러 미들웨어를 재사용하고 새로 만들지 않음. 리뷰어 추가 지시(가짜 저장소로 빈 결과, 리터럴 기대값)를 그대로 반영
 - 다음 프롬프트에 반영할 것: 05부터 화면 작업 — 리뷰에서 내장 브라우저로 데스크톱 · 390px 확인
+
+### 05 — web-layout-home (2026-10-30)
+
+- 소요: Copilot CLI 1차 9분 27초 → 리뷰 → 수정 1회 2분 25초, 재시도 1회
+- 결과: 완료 기준 통과 — 전체 테스트 62개(web 13), typecheck · lint · prettier · web build. 리뷰에서 내장 브라우저로 데스크톱 · 390px 확인
+- 사전 보완: web `lint` 스크립트 누락(루트 lint가 web을 건너뜀) → 프롬프트에 lint · vitest(jsdom) · tsconfig 명시
+- 리뷰에서 확인: `@theme` 토큰 18개 문서와 일치, 컴포넌트 hex 없음, 390px 가로 스크롤 없음, URL 쿼리 미리 채우기 · tags 정렬, 관심사 0개 시 버튼 비활성 + 안내, aria-pressed · fieldset/legend · 햄버거 aria-expanded, 관광지 카드 6개
+- 리뷰 지적 사항:
+  - **포커스 표시 없음** (mvp-spec 완료 기준) → 전역 `:focus-visible` 2px accent-text
+  - 여행 시간 보조문구 10px → 12px (토큰 최소 라벨 크기)
+  - 헤더 로고 · 모바일 메뉴 링크 터치 영역 28px → 44px
+- 리뷰 중 발견 (앱 문제 아님): 미리보기 도구가 `PORT=5173`을 주입하자 API가 그 값을 읽어 5173에 뜨려 함 → 루트 `dev`가 web · api에 같은 환경 변수를 넘기는 구조라 생김. 로컬 실행 설정에서 `PORT=3000` 고정. 09(Docker)에서 compose 환경 변수 확인 예정
+- 리뷰어 착오 정정: 디자인 문서의 "감색"은 청도 반시의 **감 색(주황 #E8590C)**. 리뷰어가 남색으로 읽어 발표 다이어그램을 남색으로 그렸음 → 다시 그림
+- Copilot이 잘한 점: 토큰 · 레이아웃이 문서와 정확히 일치, 지시대로 dev 서버를 띄우지 않고 브라우저 미확인 항목을 정직하게 보고
+- 다음 프롬프트에 반영할 것: 화면 프롬프트 완료 기준에 "포커스 표시 · 44px 터치 영역 · 12px 이상"을 명시
