@@ -1,0 +1,32 @@
+{
+  "name": "cheongdo-course",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm --workspace @cheongdo/api --if-present run dev\" \"npm --workspace @cheongdo/web --if-present run dev\"",
+    "build": "npm --workspaces --if-present run build",
+    "test": "npm --workspaces --if-present run test",
+    "test:coverage": "npm --workspaces --if-present run test:coverage",
+    "lint": "npm --workspaces --if-present run lint",
+    "typecheck": "npm --workspaces --if-present run typecheck",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^5.0.5",
+    "concurrently": "^10.0.6",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  }
+}
