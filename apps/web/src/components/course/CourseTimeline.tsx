@@ -10,8 +10,11 @@ import { Link } from 'react-router';
 import { Car, Check, Clock, MapPin } from '../ui/icons.js';
 import { Chip } from '../ui/Chip.js';
 import { formatClock, formatDuration } from '../../lib/format.js';
+import { toCourseUrl } from '../../lib/query.js';
 
-export function CourseTimeline({ course, fromQuery }: { course: Course; fromQuery: string }) {
+export function CourseTimeline({ course }: { course: Course }) {
+  const courseQuery = toCourseUrl(course.conditions).split('?')[1] ?? '';
+
   return (
     <section aria-labelledby="course-timeline-heading">
       <h2 className="sr-only" id="course-timeline-heading">
@@ -29,7 +32,7 @@ export function CourseTimeline({ course, fromQuery }: { course: Course; fromQuer
                 {nextStop && <span className="mt-2 w-px flex-1 bg-line-strong" />}
               </div>
               <div className="min-w-0 flex-1 pb-7">
-                <StopCard course={course} fromQuery={fromQuery} stop={stop} />
+                <StopCard course={course} courseQuery={courseQuery} stop={stop} />
                 {nextStop && (
                   <div className="flex min-h-11 items-center gap-2 pl-1 pt-2 text-xs text-muted sm:text-sm">
                     <Car className="h-4 w-4 shrink-0" />
@@ -52,11 +55,11 @@ export function CourseTimeline({ course, fromQuery }: { course: Course; fromQuer
 
 function StopCard({
   course,
-  fromQuery,
+  courseQuery,
   stop,
 }: {
   course: Course;
-  fromQuery: string;
+  courseQuery: string;
   stop: CourseStop;
 }) {
   const recommendation = [
@@ -99,7 +102,7 @@ function StopCard({
         <span className="text-xs text-muted">체류 {formatDuration(stop.spot.stayMinutes)}</span>
         <Link
           className="inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-ink underline decoration-line-strong underline-offset-4 hover:text-accent-text"
-          to={`/spots/${stop.spot.id}?from=${encodeURIComponent(fromQuery)}`}
+          to={`/spots/${stop.spot.id}?from=${encodeURIComponent(courseQuery)}`}
         >
           상세 보기
         </Link>

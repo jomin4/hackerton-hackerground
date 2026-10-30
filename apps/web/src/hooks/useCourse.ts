@@ -4,21 +4,24 @@ import type { Course } from '@cheongdo/shared';
 
 import { fetchJson } from '../lib/api.js';
 
-type CourseState =
+export type CourseState =
   | { status: 'loading'; data: null; error: null }
   | { status: 'success'; data: Course; error: null }
   | { status: 'error'; data: null; error: Error };
 
 const loadingState: CourseState = { status: 'loading', data: null, error: null };
 
-export function useCourse(): CourseState {
-  const { search } = useLocation();
+export function useCourse(searchOverride?: string, enabled = true): CourseState {
+  const location = useLocation();
+  const search = searchOverride ?? location.search;
   const [result, setResult] = useState<{ search: string; state: CourseState }>({
     search: '',
     state: loadingState,
   });
 
   useEffect(() => {
+    if (!enabled) return;
+
     const controller = new AbortController();
     let active = true;
 
@@ -42,7 +45,7 @@ export function useCourse(): CourseState {
       active = false;
       controller.abort();
     };
-  }, [search]);
+  }, [enabled, search]);
 
-  return result.search === search ? result.state : loadingState;
+  return enabled && result.search === search ? result.state : loadingState;
 }
