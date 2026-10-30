@@ -10,7 +10,7 @@
 | 02 | api-spots | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#3](https://github.com/jomin4/hackerton-hackerground/pull/3) |
 | 03 | recommend-course | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#2](https://github.com/jomin4/hackerton-hackerground/pull/2) |
 | 04 | api-course | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#4](https://github.com/jomin4/hackerton-hackerground/pull/4) |
-| 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | |
+| 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#5](https://github.com/jomin4/hackerton-hackerground/pull/5) |
 | 06 | web-course-result | | | | ☐ | |
 | 07 | web-spot-detail | | | | ☐ | |
 | 08 | web-states | | | | ☐ | |
