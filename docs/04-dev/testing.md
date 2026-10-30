@@ -20,7 +20,7 @@
 
 ### 추천 알고리즘
 
-[`recommendation-algorithm.md` 테스트 케이스](../03-architecture/recommendation-algorithm.md#테스트-케이스-필수) T1~T8. 특히 T1(디자인 예시 재현)과 T3(전 조합 예산 준수).
+[`recommendation-algorithm.md` 테스트 케이스](../03-architecture/recommendation-algorithm.md#테스트-케이스-필수) T1~T9. 특히 T1(디자인 예시 재현)과 T3(전 조합 예산 준수).
 
 ### API
 

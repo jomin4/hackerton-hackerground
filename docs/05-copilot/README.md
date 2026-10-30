@@ -15,7 +15,7 @@
 |---|---|---|---|
 | 01 | [scaffold-monorepo](prompts/01-scaffold-monorepo.md) | 워크스페이스, 공통 설정, shared 패키지 | — |
 | 02 | [api-spots](prompts/02-api-spots.md) | Express 앱 골격, 데이터 로드, `/api/health`, `/api/spots` | 01 |
-| 03 | [recommend-course](prompts/03-recommend-course.md) | 추천 알고리즘 + 테스트 T1~T8 | 01 |
+| 03 | [recommend-course](prompts/03-recommend-course.md) | 추천 알고리즘 + 테스트 T1~T9 | 01 |
 | 04 | [api-course](prompts/04-api-course.md) | `/api/course` + API 테스트 | 02, 03 |
 | 05 | [web-layout-home](prompts/05-web-layout-home.md) | 토큰, 레이아웃, 홈 화면 | 01 |
 | 06 | [web-course-result](prompts/06-web-course-result.md) | 코스 결과 화면 | 04, 05 |

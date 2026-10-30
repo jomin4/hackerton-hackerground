@@ -31,7 +31,7 @@ export function recommendCourse(spots: Spot[], query: CourseQuery): Course
 
 테스트 파일: apps/api/test/domain/recommend-course.test.ts
 - 픽스처: apps/api/test/fixtures/spots.ts (02에서 만들었으면 재사용, 없으면 data-model.md "초기 6곳 계산용 값" 표로 생성)
-- 문서의 테스트 케이스 T1~T8 전부 구현
+- 문서의 테스트 케이스 T1~T9 전부 구현
   - T1은 순서(id 배열), 각 stop의 travelMinutes/startMinute/endMinute, totals 5개 값, excluded id 배열을 모두 정확히 검사
   - T3는 hours 3종 × with 4종 × tags 공집합 제외 부분집합 31개 전부 돌면서 totalMinutes <= budgetMinutes 검사
 - 추가: 반환된 stops의 order가 1부터 연속인지, startMinute = 직전 endMinute + travelMinutes 인지
@@ -42,7 +42,7 @@ export function recommendCourse(spots: Spot[], query: CourseQuery): Course
 - 테스트 기대값을 구현에 맞춰 바꾸지 마. 문서 기대값과 다르면 구현을 고쳐. 문서가 틀렸다고 판단되면 바꾸지 말고 이유를 보고해
 
 완료 기준:
-- npm test -w apps/api 통과 (T1~T8 포함)
+- npm test -w apps/api 통과 (T1~T9 포함)
 - npm run typecheck, npm run lint 통과
 - 커버리지 확인: npm run test:coverage -w apps/api 에서 domain/recommend-course.ts 라인 커버리지 90% 이상
 
