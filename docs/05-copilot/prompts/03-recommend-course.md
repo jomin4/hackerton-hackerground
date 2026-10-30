@@ -14,6 +14,13 @@ apps/api/src/domain/recommend-course.ts 에 코스 추천 알고리즘을 구현
 #file:docs/03-architecture/recommendation-algorithm.md
 #file:docs/03-architecture/data-model.md
 
+먼저 할 것 (apps/api 는 01에서 package.json · tsconfig.json 만 있는 빈 패키지 상태):
+- apps/api/package.json: "type": "module" 추가, 스크립트 test(vitest run), test:coverage(vitest run --coverage), typecheck(tsc --noEmit), lint(eslint src test)
+  (vitest · @vitest/coverage-v8 · typescript · eslint 는 루트에 이미 있으니 새로 설치하지 마)
+- apps/api/tsconfig.json: include 에 "test" 추가 (테스트 파일도 타입 검사)
+- apps/api/vitest.config.ts: include test/**/*.test.ts, coverage provider v8, coverage include src/**/*.ts
+- dev · build · start 스크립트와 Express 관련 설정은 02에서 하니 지금 만들지 마
+
 함수:
 export function recommendCourse(spots: Spot[], query: CourseQuery): Course
 - 타입은 @cheongdo/shared 에서 import
@@ -24,17 +31,18 @@ export function recommendCourse(spots: Spot[], query: CourseQuery): Course
 
 테스트 파일: apps/api/test/domain/recommend-course.test.ts
 - 픽스처: apps/api/test/fixtures/spots.ts (02에서 만들었으면 재사용, 없으면 data-model.md "초기 6곳 계산용 값" 표로 생성)
-- 문서의 테스트 케이스 T1~T8 전부 구현
+- 문서의 테스트 케이스 T1~T9 전부 구현
   - T1은 순서(id 배열), 각 stop의 travelMinutes/startMinute/endMinute, totals 5개 값, excluded id 배열을 모두 정확히 검사
   - T3는 hours 3종 × with 4종 × tags 공집합 제외 부분집합 31개 전부 돌면서 totalMinutes <= budgetMinutes 검사
 - 추가: 반환된 stops의 order가 1부터 연속인지, startMinute = 직전 endMinute + travelMinutes 인지
+- 기대값은 recommendation-algorithm.md 의 표 숫자를 그대로 리터럴로 적어 (구현 함수로 기대값을 계산하지 마)
 
 제약:
 - routes, app.ts 는 수정하지 마 (04에서 연결)
 - 테스트 기대값을 구현에 맞춰 바꾸지 마. 문서 기대값과 다르면 구현을 고쳐. 문서가 틀렸다고 판단되면 바꾸지 말고 이유를 보고해
 
 완료 기준:
-- npm test -w apps/api 통과 (T1~T8 포함)
+- npm test -w apps/api 통과 (T1~T9 포함)
 - npm run typecheck, npm run lint 통과
 - 커버리지 확인: npm run test:coverage -w apps/api 에서 domain/recommend-course.ts 라인 커버리지 90% 이상
 

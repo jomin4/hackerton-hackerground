@@ -1,6 +1,13 @@
 {
   "name": "@cheongdo/api",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test"
+  },
   "dependencies": {
     "@cheongdo/shared": "*"
   }

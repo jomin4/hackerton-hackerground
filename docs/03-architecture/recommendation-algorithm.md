@@ -116,6 +116,17 @@ function recommendCourse(spots: Spot[], query: CourseQuery): Course
 | T6 | `exclude=[rail-bike]` | rail-bike가 stops · excluded 모두에 없음 |
 | T7 | 체류가 예산보다 긴 장소만 있는 데이터 | `stops: []`, 그 장소는 excluded, totals는 T5와 같은 형태 (`slack = budget`) |
 | T8 | 관심사 불일치 · 동행만 일치 장소 | 후보에서 제외됨 (excluded에도 없음) |
+| T9 | 재채움이 **순위가 더 높은 다른 권역** 장소를 나중에 추가하는 데이터 (아래) | 권역 순서가 추가된 순서가 아니라 **순위 순** |
+
+**T9 데이터** — `hours=4`, `with=family`, `tags=[nature, history]`, 모든 장소 `goodFor=[solo]`
+
+| id | zone | routeOrder | tags | stay |
+|---|---|---|---|---|
+| a · b · c · d | cheongdo-eup | 1 · 2 · 3 · 4 | nature, history | 20 |
+| e | hwayang-eup | 1 | nature, history | 70 |
+| f | unmun-myeon | 1 | nature | 10 |
+
+순위 a → b → c → d → e → f. 1차 선택: a~d(155) → e는 155+25+70=250이라 건너뜀 → f 담음(190). 동선 실제 145분 → 재채움에서 e 추가(240). 기대: 순서 `a, b, c, d, e, f`, `zones = [cheongdo-eup, hwayang-eup, unmun-myeon]`, 총 240분. 선택된 장소를 **추가된 순서**로 권역을 정하면 `… d, f, e`가 되어 틀린다.
 
 ## 알려진 한계
 
