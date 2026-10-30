@@ -5,6 +5,7 @@ import { TAG_LABELS, TRAVEL_MINUTES, ZONE_LABELS } from '@cheongdo/shared';
 import { Button } from '../components/ui/Button.js';
 import { Chip } from '../components/ui/Chip.js';
 import { Container } from '../components/ui/Container.js';
+import { NotFoundState } from '../components/ui/NotFoundState.js';
 import { Tag } from '../components/ui/Tag.js';
 import { Check, Copy, MapPin } from '../components/ui/icons.js';
 import { useCourse, type CourseState } from '../hooks/useCourse.js';
@@ -56,6 +57,21 @@ export function SpotPage() {
     } catch {
       setCopyFailed(true);
     }
+  }
+
+  if (
+    state.status === 'error' &&
+    state.error instanceof ApiError &&
+    state.error.code === 'SPOT_NOT_FOUND'
+  ) {
+    return (
+      <Container>
+        <NotFoundState
+          description="주소가 바뀌었거나 목록에서 빠진 장소예요. 관광지 목록에서 다른 장소를 찾아보세요."
+          title="찾는 장소가 없어요"
+        />
+      </Container>
+    );
   }
 
   return (
@@ -250,7 +266,8 @@ export function SpotPage() {
                             {nearby.summary}
                           </span>
                           <span className="mt-3 block text-xs text-muted">
-                            차로 약 {TRAVEL_MINUTES.sameZone}분 · 체류 {nearby.stayMinutes}분
+                            차로 약 {TRAVEL_MINUTES.sameZone}분 · 체류{' '}
+                            {formatDuration(nearby.stayMinutes)}
                           </span>
                         </Link>
                       ))}
@@ -413,20 +430,11 @@ function CourseContext({
 }
 
 function SpotError({ error }: { error: Error }) {
-  const isMissing = error instanceof ApiError && error.code === 'SPOT_NOT_FOUND';
-
   return (
     <div className="py-16 text-center">
-      {isMissing ? (
-        <>
-          <p className="font-mono text-2xl font-medium">404</p>
-          <h1 className="mt-3 text-xl font-semibold">찾는 장소가 없어요</h1>
-        </>
-      ) : (
-        <p className="text-sm text-muted" role="alert">
-          관광지를 불러오지 못했어요. {error.message}
-        </p>
-      )}
+      <p className="text-sm text-muted" role="alert">
+        관광지를 불러오지 못했어요. {error.message}
+      </p>
       <Link
         className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-ink px-5 text-sm font-medium text-white hover:bg-ink-2"
         to="/"

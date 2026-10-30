@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -165,5 +165,175 @@ describe('CoursePage', () => {
 
     const rebuildLink = await screen.findByRole('link', { name: '4시간 코스로 다시 만들기' });
     expect(rebuildLink.getAttribute('href')).toBe('/course?hours=4&with=solo&tags=nature,history');
+  });
+
+  it('shows an accessible skeleton while the course request is pending', () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise<Response>(() => {})),
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/course?hours=2&with=solo&tags=food']}>
+        <Routes>
+          <Route element={<CoursePage />} path="/course" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const status = screen.getByRole('status');
+    expect(status.getAttribute('aria-live')).toBe('polite');
+    expect(within(status).getByText('코스를 계산하고 있어요')).toBeTruthy();
+    expect(status.querySelectorAll('.h-8.rounded-full')).toHaveLength(3);
+    expect(status.querySelectorAll('.rounded-card.border')).toHaveLength(2);
+    expect(status.querySelector('.motion-safe\\:animate-spin')).toBeTruthy();
+  });
+
+  it('shows the empty result cause and preserves the conditions in both actions', async () => {
+    const emptyCourse = {
+      ...t1Course,
+      conditions: { hours: 2, with: 'solo', tags: ['food'], exclude: [] },
+      stops: [],
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(emptyCourse), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/course?hours=2&with=solo&tags=food']}>
+        <Routes>
+          <Route element={<CoursePage />} path="/course" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(
+      await screen.findByText(
+        "2시간 안에 담을 수 있는 '먹거리' 장소가 없어요. 여행 시간을 늘리거나 관심사를 더 골라보세요.",
+      ),
+    ).toBeTruthy();
+    expect(screen.getByRole('link', { name: '4시간으로 늘리기' }).getAttribute('href')).toBe(
+      '/course?hours=4&with=solo&tags=food',
+    );
+    expect(screen.getByRole('link', { name: '관심사 더 고르기' }).getAttribute('href')).toBe(
+      '/?hours=2&with=solo&tags=food',
+    );
+  });
+
+  it('does not offer to extend a six-hour empty course', async () => {
+    const emptyCourse = {
+      ...t1Course,
+      conditions: { hours: 6, with: 'family', tags: ['nature'], exclude: [] },
+      stops: [],
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(emptyCourse), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/course?hours=6&with=family&tags=nature']}>
+        <Routes>
+          <Route element={<CoursePage />} path="/course" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByRole('heading', { name: '조건에 맞는 장소를 찾지 못했어요' });
+    expect(screen.queryByRole('link', { name: '시간으로 늘리기' })).toBeNull();
+    expect(screen.getByRole('link', { name: '관심사 더 고르기' }).getAttribute('href')).toBe(
+      '/?hours=6&with=family&tags=nature',
+    );
+  });
+
+  it('highlights only the invalid query value and returns to the same conditions', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            error: {
+              code: 'INVALID_QUERY',
+              message: '여행 시간은 2, 4, 6 중 하나여야 해요.',
+              details: [{ field: 'hours', value: '99', issue: 'allowed: 2, 4, 6' }],
+            },
+          }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } },
+        ),
+      ),
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/course?hours=99&with=family&tags=nature']}>
+        <Routes>
+          <Route element={<CoursePage />} path="/course" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText('조건을 다시 확인해 주세요')).toBeTruthy();
+    expect(screen.getByText('99').className).toContain('text-accent-text');
+    expect(screen.getByText('family').className).not.toContain('text-accent-text');
+    expect(screen.getByText('여행 시간은 2, 4, 6 중 하나여야 해요.')).toBeTruthy();
+    expect(screen.getByRole('link', { name: '조건 다시 고르기' }).getAttribute('href')).toBe(
+      '/?hours=99&with=family&tags=nature',
+    );
+  });
+
+  it('retries a failed server request', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            error: { code: 'INTERNAL_ERROR', message: '잠시 후 다시 시도해 주세요.' },
+          }),
+          { status: 500, headers: { 'Content-Type': 'application/json' } },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(t1Course), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(
+      <MemoryRouter initialEntries={['/course?hours=4&with=family&tags=nature,experience']}>
+        <Routes>
+          <Route element={<CoursePage />} path="/course" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: '잠시 문제가 생겼어요' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
+    expect(await screen.findByRole('region', { name: '방문 순서' })).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows the generic retry state for network errors', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
+
+    render(
+      <MemoryRouter initialEntries={['/course?hours=2&with=solo&tags=food']}>
+        <Routes>
+          <Route element={<CoursePage />} path="/course" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: '잠시 문제가 생겼어요' })).toBeTruthy();
+    expect(screen.getByText('서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '다시 시도' })).toBeTruthy();
   });
 });

@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { COMPANION_LABELS, TAG_LABELS } from '@cheongdo/shared';
+import { COMPANION_LABELS, TAG_LABELS, type Course } from '@cheongdo/shared';
 
+import { NotFoundState } from '../components/ui/NotFoundState.js';
 import { CourseSummary } from '../components/course/CourseSummary.js';
 import { CourseTimeline } from '../components/course/CourseTimeline.js';
 import { ExcludedSpots } from '../components/course/ExcludedSpots.js';
 import { Button } from '../components/ui/Button.js';
 import { Chip } from '../components/ui/Chip.js';
 import { Container } from '../components/ui/Container.js';
-import { Check, Clock, Copy } from '../components/ui/icons.js';
+import { AlertTriangle, Check, Clock, Copy, RefreshCw, Search } from '../components/ui/icons.js';
 import { useCourse } from '../hooks/useCourse.js';
+import { ApiError, type ApiErrorDetail } from '../lib/api.js';
+import { toCourseUrl } from '../lib/query.js';
 
 const companionHeadlines = {
   couple: '커플과 함께하는',
@@ -19,7 +22,8 @@ const companionHeadlines = {
 
 export function CoursePage() {
   const location = useLocation();
-  const state = useCourse();
+  const [retryCount, setRetryCount] = useState(0);
+  const state = useCourse(undefined, true, retryCount);
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -124,9 +128,13 @@ export function CoursePage() {
         {state.status === 'loading' ? (
           <CourseSkeleton />
         ) : state.status === 'error' ? (
-          <ErrorState message={state.error.message} />
+          <ErrorState
+            error={state.error}
+            onRetry={() => setRetryCount((count) => count + 1)}
+            search={location.search}
+          />
         ) : state.data.stops.length === 0 ? (
-          <EmptyCourse />
+          <EmptyCourse course={state.data} />
         ) : (
           <>
             <div className="order-2 w-full min-w-0 flex-[999_1_560px] md:order-1">
@@ -151,24 +159,160 @@ export function CoursePage() {
 
 function CourseSkeleton() {
   return (
-    <p className="w-full py-16 text-center text-sm text-muted" role="status">
-      코스를 계산하고 있어요
-    </p>
+    <div aria-live="polite" className="w-full max-w-3xl" role="status">
+      <div aria-hidden="true">
+        <div className="h-8 w-2/3 max-w-lg rounded bg-fill" />
+        <div className="mt-5 flex gap-2">
+          {[0, 1, 2].map((chip) => (
+            <div className="h-8 w-20 rounded-full bg-fill" key={chip} />
+          ))}
+        </div>
+        <div className="mt-8 space-y-4">
+          {[1, 2].map((number) => (
+            <div className="flex gap-4" key={number}>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fill font-mono text-xs text-muted">
+                0{number}
+              </span>
+              <div className="flex-1 rounded-card border border-line p-5">
+                <div className="h-5 w-1/3 rounded bg-fill" />
+                <div className="mt-4 h-4 w-full rounded bg-fill" />
+                <div className="mt-2 h-4 w-2/3 rounded bg-fill" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="mt-8 flex min-h-11 items-center justify-center gap-2 text-sm text-muted">
+        <RefreshCw aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />
+        코스를 계산하고 있어요
+      </p>
+    </div>
   );
 }
 
-function EmptyCourse() {
+function ErrorState({
+  error,
+  onRetry,
+  search,
+}: {
+  error: Error;
+  onRetry: () => void;
+  search: string;
+}) {
+  if (error instanceof ApiError && error.code === 'SPOT_NOT_FOUND') {
+    return (
+      <NotFoundState
+        description="주소가 바뀌었거나 목록에서 빠진 장소예요. 관광지 목록에서 다른 장소를 찾아보세요."
+        title="찾는 장소가 없어요"
+      />
+    );
+  }
+
+  if (error instanceof ApiError && error.code === 'INVALID_QUERY') {
+    return (
+      <section aria-labelledby="course-error-title" className="w-full max-w-2xl py-10" role="alert">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-soft text-accent-text">
+          <AlertTriangle aria-hidden="true" className="h-6 w-6" />
+        </div>
+        <h2 className="mt-5 text-2xl font-semibold" id="course-error-title">
+          조건을 다시 확인해 주세요
+        </h2>
+        <code className="mt-4 block break-all rounded-lg border border-line bg-surface-2 p-4 font-mono text-xs leading-6">
+          {renderQuery(search, error.details)}
+        </code>
+        <p className="mt-3 text-sm leading-6 text-ink-2">{error.message}</p>
+        <Link
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-ink px-5 text-sm font-medium text-white hover:bg-ink-2"
+          to={`/${search}`}
+        >
+          조건 다시 고르기
+        </Link>
+      </section>
+    );
+  }
+
+  const message =
+    error instanceof ApiError && error.code === 'NETWORK_ERROR'
+      ? '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.'
+      : error.message;
+
   return (
-    <p className="w-full py-16 text-center text-sm text-muted" role="status">
-      조건에 맞는 장소를 찾지 못했어요
-    </p>
+    <section aria-labelledby="course-error-title" className="w-full max-w-xl py-10" role="alert">
+      <h2 className="text-2xl font-semibold" id="course-error-title">
+        잠시 문제가 생겼어요
+      </h2>
+      <p className="mt-3 text-sm leading-6 text-muted">{message}</p>
+      <Button className="mt-6" onClick={onRetry} type="button">
+        <RefreshCw aria-hidden="true" className="h-4 w-4" />
+        다시 시도
+      </Button>
+    </section>
   );
 }
 
-function ErrorState({ message }: { message: string }) {
+function renderQuery(search: string, details: ApiErrorDetail[]) {
+  const parts = search.replace(/^\?/, '').split('&').filter(Boolean);
+
+  return parts.map((part, index) => {
+    const separatorIndex = part.indexOf('=');
+    const rawField = separatorIndex === -1 ? part : part.slice(0, separatorIndex);
+    const rawValue = separatorIndex === -1 ? '' : part.slice(separatorIndex + 1);
+    const field = decodeQueryPart(rawField);
+    const value = decodeQueryPart(rawValue);
+    const hasIssue = details.some((detail) => detail.field === field && detail.value === value);
+
+    return (
+      <span key={`${index}-${part}`}>
+        {index > 0 ? '&' : ''}
+        {rawField}=
+        <span className={hasIssue ? 'font-semibold text-accent-text' : ''}>{rawValue}</span>
+      </span>
+    );
+  });
+}
+
+function decodeQueryPart(value: string) {
+  try {
+    return decodeURIComponent(value.replace(/\+/g, ' '));
+  } catch {
+    return value;
+  }
+}
+
+function EmptyCourse({ course }: { course: Course }) {
+  const { conditions } = course;
+  const interestLabels = conditions.tags.map((tag) => TAG_LABELS[tag]).join(', ');
+  const homeUrl = toCourseUrl(conditions).replace(/^\/course/, '/');
+  const nextHours = conditions.hours === 2 ? 4 : conditions.hours === 4 ? 6 : null;
+
   return (
-    <p className="w-full py-16 text-center text-sm text-muted" role="alert">
-      코스를 불러오지 못했어요. {message}
-    </p>
+    <section aria-labelledby="empty-course-title" className="w-full max-w-2xl py-10">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-2 text-ink-2">
+        <Search aria-hidden="true" className="h-6 w-6" />
+      </div>
+      <h2 className="mt-5 text-2xl font-semibold" id="empty-course-title">
+        조건에 맞는 장소를 찾지 못했어요
+      </h2>
+      <p className="mt-3 text-sm leading-6 text-muted">
+        {conditions.hours}시간 안에 담을 수 있는 '{interestLabels}' 장소가 없어요. 여행 시간을
+        늘리거나 관심사를 더 골라보세요.
+      </p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {nextHours !== null && (
+          <Link
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-ink px-5 text-sm font-medium text-white hover:bg-ink-2"
+            to={toCourseUrl({ ...conditions, hours: nextHours })}
+          >
+            {nextHours}시간으로 늘리기
+          </Link>
+        )}
+        <Link
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-line-strong bg-surface px-5 text-sm font-medium hover:bg-surface-2"
+          to={homeUrl}
+        >
+          관심사 더 고르기
+        </Link>
+      </div>
+    </section>
   );
 }

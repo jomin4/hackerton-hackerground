@@ -11,11 +11,16 @@ export type CourseState =
 
 const loadingState: CourseState = { status: 'loading', data: null, error: null };
 
-export function useCourse(searchOverride?: string, enabled = true): CourseState {
+export function useCourse(searchOverride?: string, enabled = true, retryCount = 0): CourseState {
   const location = useLocation();
   const search = searchOverride ?? location.search;
-  const [result, setResult] = useState<{ search: string; state: CourseState }>({
+  const [result, setResult] = useState<{
+    search: string;
+    retryCount: number;
+    state: CourseState;
+  }>({
     search: '',
+    retryCount: -1,
     state: loadingState,
   });
 
@@ -27,12 +32,18 @@ export function useCourse(searchOverride?: string, enabled = true): CourseState 
 
     void fetchJson<Course>(`/api/course${search}`, controller.signal)
       .then((data) => {
-        if (active) setResult({ search, state: { status: 'success', data, error: null } });
+        if (active)
+          setResult({
+            search,
+            retryCount,
+            state: { status: 'success', data, error: null },
+          });
       })
       .catch((error: unknown) => {
         if (!active) return;
         setResult({
           search,
+          retryCount,
           state: {
             status: 'error',
             data: null,
@@ -45,7 +56,9 @@ export function useCourse(searchOverride?: string, enabled = true): CourseState 
       active = false;
       controller.abort();
     };
-  }, [enabled, search]);
+  }, [enabled, retryCount, search]);
 
-  return enabled && result.search === search ? result.state : loadingState;
+  return enabled && result.search === search && result.retryCount === retryCount
+    ? result.state
+    : loadingState;
 }

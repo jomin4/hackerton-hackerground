@@ -78,6 +78,33 @@ export function Copy(props: IconProps) {
   );
 }
 
+export function Search(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <circle cx="10.8" cy="10.8" r="6.8" />
+      <path d="m16 16 4.5 4.5" />
+    </IconBase>
+  );
+}
+
+export function AlertTriangle(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M10.3 4.8 2.7 18a1.8 1.8 0 0 0 1.6 2.7h15.4a1.8 1.8 0 0 0 1.6-2.7L13.7 4.8a2 2 0 0 0-3.4 0Z" />
+      <path d="M12 9v4m0 3h.01" />
+    </IconBase>
+  );
+}
+
+export function RefreshCw(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M20 7v5h-5M4 17v-5h5" />
+      <path d="M5.6 9A7 7 0 0 1 17.5 6L20 12M4 12l2.5 6A7 7 0 0 0 18.4 15" />
+    </IconBase>
+  );
+}
+
 export function Sliders(props: IconProps) {
   return (
     <IconBase {...props}>

@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { SpotPage } from './SpotPage.js';
+import { ApiError } from '../lib/api.js';
 
 vi.mock('../lib/api.js', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../lib/api.js')>();
@@ -95,5 +96,42 @@ describe('SpotPage', () => {
     expect(
       within(information).getByText('출처: 한국관광공사 · 2026-08-18 기준. 방문 전 확인하세요.'),
     ).toBeTruthy();
+  });
+
+  it('formats nearby spot stay durations like course results', async () => {
+    const nearby: SpotSummary = {
+      id: 'yudeung-yeonji',
+      name: '유등연지',
+      summary: '물가와 자연 풍경을 천천히 감상할 수 있는 장소예요.',
+      zone: 'cheongdo-eup',
+      tags: ['nature'],
+      stayMinutes: 100,
+    };
+    renderSpot(spotBase, [nearby]);
+
+    expect(await screen.findByText(/체류 1시간 40분/)).toBeTruthy();
+    expect(screen.queryByText(/체류 100분/)).toBeNull();
+  });
+
+  it('shows only the 404 design when a spot does not exist', async () => {
+    vi.mocked(fetchJson).mockRejectedValue(
+      new ApiError(404, 'SPOT_NOT_FOUND', '해당 관광지를 찾을 수 없어요.'),
+    );
+    render(
+      <MemoryRouter initialEntries={['/spots/nope']}>
+        <Routes>
+          <Route element={<SpotPage />} path="/spots/:id" />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: '찾는 장소가 없어요' })).toBeTruthy();
+    expect(screen.getByText('404')).toBeTruthy();
+    expect(screen.queryByText('관광지 상세')).toBeNull();
+    expect(screen.queryByRole('link', { name: '코스로 돌아가기' })).toBeNull();
+    expect(screen.getByRole('link', { name: '관광지 목록으로' }).getAttribute('href')).toBe(
+      '/#spots',
+    );
+    expect(screen.getByRole('link', { name: '홈으로' }).getAttribute('href')).toBe('/');
   });
 });

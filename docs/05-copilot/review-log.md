@@ -13,7 +13,7 @@
 | 05 | web-layout-home | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#5](https://github.com/jomin4/hackerton-hackerground/pull/5) |
 | 06 | web-course-result | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#6](https://github.com/jomin4/hackerton-hackerground/pull/6) |
 | 07 | web-spot-detail | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#7](https://github.com/jomin4/hackerton-hackerground/pull/7) |
-| 08 | web-states | | | | ☐ | |
+| 08 | web-states | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#8](https://github.com/jomin4/hackerton-hackerground/pull/8) |
 | 09 | dockerize | | | | ☐ | |
 
 ## 기록 양식
@@ -128,3 +128,14 @@
 - Copilot이 범위 밖에서 바꾼 것: 06의 상세 링크 `from`을 현재 URL 문자열 대신 `toCourseUrl(course.conditions)`로 정규화 — 개선이라 수용
 - 남긴 것: 같은 권역 카드의 체류가 "100분"(결과 화면은 "1시간 40분") → 08 프롬프트에 함께 반영
 - Copilot이 잘한 점: 프롬프트에 추가한 접근성 · 06과 같은 문구/URL 조건을 그대로 지킴
+
+### 08 — web-states (2026-10-30)
+
+- 소요: Copilot CLI 1차 6분 17초 → 리뷰 → 수정 1회 2분 49초, 재시도 1회
+- 결과: 완료 기준 통과 — 전체 테스트 79개(web 30), typecheck · lint · prettier. 브라우저 확인은 Copilot에 맡기지 않고 리뷰어가 별도 탭에서 진행
+- 사전 보완: 07 리뷰에서 남긴 체류 표기 통일, 없는 장소 404에서 상세 상단 숨김, 접근성 기준을 프롬프트에 추가
+- 리뷰에서 확인: 400(`hours=99` → "99"만 accent-text 강조, 한국어 메시지, 조건 다시 고르기), SPOT_NOT_FOUND 404(상세 상단 없이 404 디자인만), 없는 경로 404 페이지, 체류 "1시간 40분" 통일, API를 실제로 내려서 "다시 시도" 화면
+- 리뷰 지적 사항:
+  - API가 내려가 프록시 · nginx가 502 HTML을 주면 `statusText`("Bad Gateway") 영어가 화면에 노출 → 공통 오류 JSON이 아니면 한국어 고정 문구, 네트워크 오류도 한국어
+- 리뷰 운영 메모: 사용자가 같은 미리보기 탭을 보고 있어 리뷰어 조작과 섞임 → 리뷰는 별도 탭에서
+- Copilot이 잘한 점: 상태별 컴포넌트 테스트로 고정, 404 공통 컴포넌트(NotFoundState) 분리

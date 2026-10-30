@@ -1,20 +1,43 @@
+export interface ApiErrorDetail {
+  field: string;
+  value: string;
+  issue: string;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
     public readonly code: string,
     message: string,
+    public readonly details: ApiErrorDetail[] = [],
   ) {
     super(message);
     this.name = 'ApiError';
   }
 }
 
-type ErrorPayload = {
-  error?: {
-    code?: unknown;
-    message?: unknown;
-  };
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+type ApiErrorPayload = {
+  code: string;
+  message: string;
+  details?: unknown;
 };
+
+function isApiErrorPayload(value: unknown): value is ApiErrorPayload {
+  return isRecord(value) && typeof value.code === 'string' && typeof value.message === 'string';
+}
+
+function isApiErrorDetail(value: unknown): value is ApiErrorDetail {
+  return (
+    isRecord(value) &&
+    typeof value.field === 'string' &&
+    typeof value.value === 'string' &&
+    typeof value.issue === 'string'
+  );
+}
 
 export async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   let response: Response;
@@ -25,18 +48,25 @@ export async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw error;
     }
-    const message = error instanceof Error ? error.message : '서버에 연결할 수 없어요.';
-    throw new ApiError(0, 'NETWORK_ERROR', message);
+    throw new ApiError(0, 'NETWORK_ERROR', '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.');
   }
 
   if (!response.ok) {
-    const payload: ErrorPayload = await response.json().catch(() => ({}));
-    const code = typeof payload.error?.code === 'string' ? payload.error.code : 'HTTP_ERROR';
-    const message =
-      typeof payload.error?.message === 'string'
-        ? payload.error.message
-        : response.statusText || '요청을 처리할 수 없어요.';
-    throw new ApiError(response.status, code, message);
+    const body: unknown = await response.json().catch(() => undefined);
+    const errorPayload = isRecord(body) && isApiErrorPayload(body.error) ? body.error : undefined;
+    const code = errorPayload
+      ? errorPayload.code
+      : response.status >= 500
+        ? 'INTERNAL_ERROR'
+        : 'HTTP_ERROR';
+    const message = errorPayload ? errorPayload.message : '잠시 후 다시 시도해 주세요.';
+    const details =
+      errorPayload &&
+      Array.isArray(errorPayload.details) &&
+      errorPayload.details.every(isApiErrorDetail)
+        ? errorPayload.details
+        : undefined;
+    throw new ApiError(response.status, code, message, details);
   }
 
   return (await response.json()) as T;
