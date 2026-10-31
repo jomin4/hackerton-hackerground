@@ -15,6 +15,7 @@
 | 07 | web-spot-detail | 2026-10-30 | 2026-10-30 | 0 | ☑ | [#7](https://github.com/jomin4/hackerton-hackerground/pull/7) |
 | 08 | web-states | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#8](https://github.com/jomin4/hackerton-hackerground/pull/8) |
 | 09 | dockerize | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#9](https://github.com/jomin4/hackerton-hackerground/pull/9) |
+| 10 | tourapi-tools | 2026-10-31 | 2026-10-31 | 0 | ☑ | [#12](https://github.com/jomin4/hackerton-hackerground/pull/12) |
 
 ## 기록 양식
 
@@ -151,3 +152,12 @@
 - 이미지 크기: Copilot 보고 api 267MB · web 94.2MB는 Docker Desktop containerd 저장소가 압축 레이어까지 더한 값. 실제 파일시스템(`du -sxh /`)은 **api 187.5MB · web 64.1MB**(우리 파일 424KB, 나머지 nginx:alpine 기본). web 60MB 목표는 기본 이미지보다 작아 비현실적 → 프롬프트 기준을 70MB · du 측정으로 정정
 - Copilot이 범위 밖에서 한 것: web healthcheck 추가, 빌드에 `tsconfig.base.json` 복사 — 둘 다 필요해서 수용
 - 해커톤용으로 저장할 표현: "끝나지 않는 명령은 -d로 띄우고 확인 후 반드시 down", "호스트 환경 변수가 바뀌어도 컨테이너 포트가 고정되게 compose에 명시"
+
+### 10 — tourapi-tools (2026-10-31)
+
+- 소요: Copilot CLI 1차 2분 56초, 재시도 0회 (AI 크레딧 1.5)
+- 결과: 완료 기준 통과 — `--limit 2` → "done: 2 items, 9 calls", 후보표 spot 68 · restaurant 13 · cafe 18, 전체 테스트 79개 · typecheck · lint · prettier
+- 사전 보완: 오늘 남은 호출이 약 460건이라 전체 수집 금지(`--limit`만), 기존 초안 덮어쓰기 금지 + 리뷰어가 미리 백업, 키 출력 금지
+- 리뷰에서 확인: 키가 로그 · 오류 메시지에 안 나옴(오류는 결과 코드 · HTTP 상태만), `--limit`은 sample 파일로 따로 저장, `items: ""` · 단일 객체 정규화, 3회 재시도 후 exit 1, `.data-draft/`가 git · Docker 컨텍스트 밖, 기존 133건 초안 보존
+- 남긴 것: 상세 응답을 배열로 저장(초안 v0은 객체) — candidates가 둘 다 읽어서 수용. 1유형 사진 수는 대표 사진과 상세 사진이 같은 파일이면 중복으로 셀 수 있음(선정 참고용이라 수용)
+- Copilot이 잘한 점: `.env`의 따옴표 · BOM · `export` 형식까지 처리, 한 건이라도 실패하면 워커 전체 중단
