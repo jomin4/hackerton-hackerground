@@ -16,6 +16,7 @@
 | 08 | web-states | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#8](https://github.com/jomin4/hackerton-hackerground/pull/8) |
 | 09 | dockerize | 2026-10-30 | 2026-10-30 | 1 | ☑ | [#9](https://github.com/jomin4/hackerton-hackerground/pull/9) |
 | 10 | tourapi-tools | 2026-10-31 | 2026-10-31 | 0 | ☑ | [#12](https://github.com/jomin4/hackerton-hackerground/pull/12) |
+| 11 | shared-v2 | 2026-10-31 | 2026-10-31 | 1 | ☑ | [#14](https://github.com/jomin4/hackerton-hackerground/pull/14) |
 
 ## 기록 양식
 
@@ -161,3 +162,14 @@
 - 리뷰에서 확인: 키가 로그 · 오류 메시지에 안 나옴(오류는 결과 코드 · HTTP 상태만), `--limit`은 sample 파일로 따로 저장, `items: ""` · 단일 객체 정규화, 3회 재시도 후 exit 1, `.data-draft/`가 git · Docker 컨텍스트 밖, 기존 133건 초안 보존
 - 남긴 것: 상세 응답을 배열로 저장(초안 v0은 객체) — candidates가 둘 다 읽어서 수용. 1유형 사진 수는 대표 사진과 상세 사진이 같은 파일이면 중복으로 셀 수 있음(선정 참고용이라 수용)
 - Copilot이 잘한 점: `.env`의 따옴표 · BOM · `export` 형식까지 처리, 한 건이라도 실패하면 워커 전체 중단
+
+### 11 — shared-v2 (2026-10-31)
+
+- 소요: Copilot CLI 1차 8분 17초(AI 크레딧 4.17) → 리뷰 → 수정 1회 1분 21초(0.58), 재시도 1회
+- 결과: 완료 기준 통과 — shared 테스트 60개 · typecheck · lint · prettier. api 31 · web 48 타입 오류는 v1 타입 사용으로 예상된 것 (통합 브랜치 `feat/day-course-v2`에서 12~16으로 전환)
+- 사전 보완: 저장소 전체 검사가 실패하는 게 정상임을 프롬프트에 명시해 api · web을 건드리지 않게 함, 요일 표기 규칙(2일 `·`, 3일 이상 `~`, 휴무 줄 맨 끝)을 예시 4개로 고정
+- 리뷰에서 확인(탐침): 요일 키 누락 · 알 수 없는 키 실패, `https:/x` 실패, `14:00–17:00` · `10:00–13:00` 경계 통과, `24:00` 실패, 앞 공백 시각 실패, TZ를 Kiritimati(UTC+14) · Pago Pago(UTC−11)로 바꿔도 `2026-11-09` = 월
+- 리뷰 지적 사항:
+  - 같은 요일 구간이 역순(`17:00–21:00, 11:00–14:00`)이어도 통과 → 표시가 거꾸로 나오고 일정 계산이 순서를 가정함 → 오름차순 강제
+  - `?exclude=a&exclude=b`(Express가 배열로 넘김) → 영어 zod 기본 메시지 노출 → 한국어 메시지
+- Copilot이 잘한 점: 시각 형식이 틀린 구간은 겹침 검사에서 건너뛰어 오류가 한 번만 나게 함, 시간대 테스트에서 원래 `TZ` 복구
