@@ -4,5 +4,7 @@ node_modules
 coverage
 .git
 .env*
+.data-draft
+tools
 .claude
 docs

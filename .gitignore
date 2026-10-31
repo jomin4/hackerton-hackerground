@@ -6,5 +6,6 @@ coverage/
 .env
 .env.*
 !.env.example
+.data-draft/
 .DS_Store
 *.log
